@@ -1,5 +1,6 @@
 import { io } from 'socket.io-client';
 
 export function connectWS() {
-    return io('http://localhost:4600');
+    // This uses the environment variable you set on Render
+    return io(import.meta.env.https://real-time-chat-app-um6p.onrender.com);
 }

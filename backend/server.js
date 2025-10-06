@@ -3,9 +3,7 @@ import express from 'express';
 import { Server } from 'socket.io';
 
 const app = express();
-
 const server = createServer(app);
-
 const io = new Server(server, {
     cors: {
         origin: '*',
@@ -19,19 +17,16 @@ io.on('connection', (socket) => {
 
     socket.on('joinRoom', async (userName) => {
         console.log(`${userName} is joining the group.`);
-
         await socket.join(ROOM);
-
-        // send to all
-        // io.to(ROOM).emit('roomNotice', userName);
-
-        // broadcast
         socket.to(ROOM).emit('roomNotice', userName);
     });
 
+    // --- THIS IS THE CHANGE ---
     socket.on('chatMessage', (msg) => {
-        socket.to(ROOM).emit('chatMessage', msg);
+        // Broadcast to everyone in the room (including the sender)
+        io.to(ROOM).emit('chatMessage', msg);
     });
+    // -------------------------
 
     socket.on('typing', (userName) => {
         socket.to(ROOM).emit('typing', userName);
